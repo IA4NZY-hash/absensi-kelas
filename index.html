@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Absensi Sederhana</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #3498db;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+      margin-bottom: 25px;
+    }
+
+    button {
+      flex: 1 1 30%;
+      padding: 11px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit { background-color: #2ecc71; color: white; }
+    .btn-submit:hover { background-color: #27ae60; }
+
+    .btn-fingerprint { background-color: #8e44ad; color: white; }
+    .btn-fingerprint:hover { background-color: #71368a; }
+
+    .btn-clear { background-color: #e74c3c; color: white; }
+    .btn-clear:hover { background-color: #c0392b; }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      color: #555;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      display: inline-block;
+    }
+
+    .badge-hadir { background-color: #2ecc71; }
+    .badge-telat { background-color: #8b0000; }
+    .badge-izin { background-color: #f39c12; }
+    .badge-dispensasi { background-color: #8e44ad; }
+    .badge-sakit { background-color: #e74c3c; }
+    .badge-alpa {background-color: #333; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Form Absensi Harian</h2>
+    
+    <form id="attendanceForm">
+      <div class="form-group">
+        <label for="noAbsen">Nomor Absen</label>
+        <input type="number" id="noAbsen" placeholder="Ketik Nomor Absen (misal: 1)" required>
+      </div>
+
+      <div class="form-group">
+        <label for="nama">Nama Lengkap</label>
+        <input type="text" id="nama" placeholder="Terisi otomatis jika No. Absen terdaftar" required>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Keterangan</label>
+        <select id="status">
+          <option value="Hadir">Hadir</option>
+          <option value="Izin">Izin</option>
+          <option value="Dispensasi">Dispensasi</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Alpa">Alpa</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="btn-submit">Absen Manual</button>
+        <button type="button" class="btn-fingerprint" id="btnFingerprint">Absen Fingerprint ☝️</button>
+        <button type="button" class="btn-clear" id="btnClear">Hapus Riwayat</button>
+      </div>
+    </form>
+
+    <h3>Riwayat Absensi</h3>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Waktu</th>
+            <th>No. Absen</th>
+            <th>Nama</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTable">
+          <!-- Data terisi via JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // 📁 DATABASE SISWA
+    // =========================================================
+    const studentDatabase = {
+      "1": "Asep Sunandar",
+      "2": "Budi Santoso",
+      "3": "Citra Lestari",
+      "4": "Deni Setiawan",
+      "5": "Eka Putri"
+    };
+
+    // Element Selector
+    const form = document.getElementById('attendanceForm');
+    const inputNoAbsen = document.getElementById('noAbsen');
+    const inputNama = document.getElementById('nama');
+    const tableBody = document.getElementById('attendanceTable');
+    const btnClear = document.getElementById('btnClear');
+    const btnFingerprint = document.getElementById('btnFingerprint');
+
+    // Mengambil data riwayat absensi dari LocalStorage
+    let attendanceData = JSON.parse(localStorage.getItem('absensiData')) || [];
+
+    // Otomatis isi Nama ketika Nomor Absen diketik
+    inputNoAbsen.addEventListener('input', function() {
+      const val = this.value.trim();
+      if (studentDatabase[val]) {
+        inputNama.value = studentDatabase[val];
+      } else {
+        inputNama.value = '';
+      }
+    });
+
+    // Render Tabel Riwayat Absensi
+    function renderTable() {
+      tableBody.innerHTML = '';
+
+      if (attendanceData.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">Belum ada data absensi.</td></tr>`;
+        return;
+      }
+
+      attendanceData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        
+        let badgeClass = 'badge-hadir';
+        if (item.status.includes('Telat')) badgeClass = 'badge-telat';
+        if (item.status.includes('Izin')) badgeClass = 'badge-izin';
+        if (item.status.includes('Dispensasi')) badgeClass = 'badge-dispensasi';
+        if (item.status.includes('Sakit')) badgeClass = 'badge-sakit';
+        if (item.status.includes('Alpa')) badgeClass = 'badge-alpa';
+
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.waktu}</td>
+          <td>${item.noAbsen}</td>
+          <td>${item.nama}</td>
+          <td><span class="badge ${badgeClass}">${item.status}</span></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Simpan Data Absen (Termasuk Cek Keterlambatan)
+    function simpanAbsen(noAbsen, nama, statusPilihan) {
+      const now = new Date();
+      const waktuFormat = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
+
+      let statusAkhir = statusPilihan;
+
+      // Fitur Deteksi Keterlambatan:
+      // Hanya berlaku jika status yang dipilih adalah "Hadir"
+      if (statusPilihan === 'Hadir') {
+        const jam = now.getHours();
+        const menit = now.getMinutes();
+
+        // Cek jika jam melebihi 06:30
+        if (jam > 6 || (jam === 6 && menit > 30)) {
+          statusAkhir = 'Telat';
+        }
+      }
+
+      const newRecord = { waktu: waktuFormat, noAbsen, nama, status: statusAkhir };
+      attendanceData.push(newRecord);
+      localStorage.setItem('absensiData', JSON.stringify(attendanceData));
+
+      renderTable();
+      form.reset();
+    }
+
+    // Submit Absen Manual
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const noAbsen = inputNoAbsen.value.trim();
+      const nama = inputNama.value.trim();
+      const status = document.getElementById('status').value;
+
+      simpanAbsen(noAbsen, nama, status);
+    });
+
+    // Fitur Fingerprint
+    btnFingerprint.addEventListener('click', async function() {
+      const status = document.getElementById('status').value;
+      let noAbsen = inputNoAbsen.value.trim();
+      let nama = inputNama.value.trim();
+
+      if (!window.PublicKeyCredential) {
+        alert('Browser/Perangkat tidak mendukung Fingerprint!');
+        return;
+      }
+
+      const savedUser = JSON.parse(localStorage.getItem('fingerprintUser'));
+
+      if (savedUser && (!noAbsen || !nama)) {
+        noAbsen = savedUser.noAbsen;
+        nama = savedUser.nama;
+      } else if (!noAbsen || !nama) {
+        alert('Isi No. Absen dan Nama terlebih dahulu untuk pendaftaran awal!');
+        return;
+      }
+
+      try {
+        const credential = await navigator.credentials.create({
+          publicKey: {
+            challenge: new Uint8Array([1, 2, 3, 4]),
+            rp: { name: "Aplikasi Absensi" },
+            user: { id: new Uint8Array([1, 2, 3, 4]), name: nama, displayName: nama },
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            timeout: 60000,
+            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
+          }
+        });
+
+        if (credential) {
+          localStorage.setItem('fingerprintUser', JSON.stringify({ noAbsen, nama }));
+          simpanAbsen(noAbsen, nama, status);
+          alert(`Absensi Fingerprint Berhasil untuk ${nama}!`);
+        }
+      } catch (err) {
+        alert('Fingerprint dibatalkan/gagal.');
+      }
+    });
+
+    // Hapus Riwayat Absensi
+    btnClear.addEventListener('click', function() {
+      if (attendanceData.length === 0) return;
+      if (confirm('Hapus seluruh riwayat absensi?')) {
+        attendanceData = [];
+        localStorage.removeItem('absensiData');
+        localStorage.removeItem('fingerprintUser');
+        renderTable();
+      }
+    });
+
+    // Inisialisasi awal
+    renderTable();
+  </script>
+</body>
+</html>
