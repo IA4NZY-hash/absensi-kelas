@@ -14,7 +14,6 @@
       --text-main: #0f172a;
       --text-muted: #64748b;
       
-      /* Status Colors */
       --hadir-bg: #10b981;
       --telat-bg: #be123c;
       --izin-bg: #f59e0b;
@@ -222,7 +221,7 @@
     .badge-izin { background-color: var(--izin-bg); }
     .badge-dispensasi { background-color: var(--dispensasi-bg); }
     .badge-sakit { background-color: var(--sakit-bg); }
-    .badge-alpa { background-color: var(--alpa-bg); }
+    .badge.alpa { background-color: var(--alpa-bg); }
   </style>
 </head>
 <body>
@@ -257,13 +256,13 @@
 
       <div class="btn-group">
         <button type="submit" class="btn-submit">Absen Manual</button>
-        <button type="button" class="btn-fingerprint" id="btnFingerprint">Fingerprint ☝️</button>
-        <button type="button" class="btn-clear" id="btnClear">Hapus Data</button>
+        <button type="button" class="btn-fingerprint" id="btnFingerprint">Fingerprint</button>
+        <button type="button" class="btn-clear" id="btnClear">Hapus Data HP</button>
       </div>
     </form>
 
     <div class="section-header">
-      <h3>Riwayat Kehadiran</h3>
+      <h3>Riwayat Lokal Perangkat</h3>
     </div>
 
     <div class="table-responsive">
@@ -285,6 +284,11 @@
   </div>
 
   <script>
+    // =========================================================
+    // 🔗 URL GOOGLE APPS SCRIPT (Ganti dengan URL milikmu)
+    // =========================================================
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfaxgplEKV0pLg8GuCGYmYn9Hr2IG7U3wHRupbv2TaukunIAdTFt1M3YGaUjtadsuyFg/exec';
+
     const studentDatabase = {
       "1": "Asep Sunandar",
       "2": "Budi Santoso",
@@ -315,7 +319,7 @@
       tableBody.innerHTML = '';
 
       if (attendanceData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 24px;">Belum ada riwayat absensi.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 24px;">Belum ada riwayat absensi lokal.</td></tr>`;
         return;
       }
 
@@ -327,7 +331,7 @@
         if (item.status.includes('Izin')) badgeClass = 'badge-izin';
         if (item.status.includes('Dispensasi')) badgeClass = 'badge-dispensasi';
         if (item.status.includes('Sakit')) badgeClass = 'badge-sakit';
-        if (item.status.includes('Alpa')) badgeClass = 'badge-class';
+        if (item.status.includes('Alpa')) badgeClass = 'badge-alpa';
 
         row.innerHTML = `
           <td>${index + 1}</td>
@@ -340,7 +344,7 @@
       });
     }
 
-    function simpanAbsen(noAbsen, nama, statusPilihan) {
+    async function simpanAbsen(noAbsen, nama, statusPilihan) {
       const now = new Date();
       const waktuFormat = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
 
@@ -356,11 +360,26 @@
       }
 
       const newRecord = { waktu: waktuFormat, noAbsen, nama, status: statusAkhir };
+      
+      // 1. Simpan di LocalStorage HP
       attendanceData.push(newRecord);
       localStorage.setItem('absensiData', JSON.stringify(attendanceData));
-
       renderTable();
       form.reset();
+
+      // 2. Kirim Data secara Terpusat ke Google Sheets
+      if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbzfaxgplEKV0pLg8GuCGYmYn9Hr2IG7U3wHRupbv2TaukunIAdTFt1M3YGaUjtadsuyFg/exec') {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newRecord)
+          });
+        } catch (err) {
+          console.error('Gagal mengirim ke Google Sheets:', err);
+        }
+      }
     }
 
     form.addEventListener('submit', function(e) {
@@ -437,7 +456,7 @@
 
     btnClear.addEventListener('click', function() {
       if (attendanceData.length === 0) return;
-      if (confirm('Hapus seluruh riwayat absensi?')) {
+      if (confirm('Hapus riwayat lokal di HP ini?')) {
         attendanceData = [];
         localStorage.removeItem('absensiData');
         localStorage.removeItem('fingerprintUser');
