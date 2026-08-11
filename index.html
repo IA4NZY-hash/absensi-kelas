@@ -221,7 +221,7 @@
     .badge-izin { background-color: var(--izin-bg); }
     .badge-dispensasi { background-color: var(--dispensasi-bg); }
     .badge-sakit { background-color: var(--sakit-bg); }
-    .badge.alpa { background-color: var(--alpa-bg); }
+    .badge-alpa { background-color: var(--alpa-bg); }
   </style>
 </head>
 <body>
@@ -285,7 +285,7 @@
 
   <script>
     // =========================================================
-    // 🔗 URL GOOGLE APPS SCRIPT (Ganti dengan URL milikmu)
+    // 🔗 URL GOOGLE APPS SCRIPT
     // =========================================================
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfaxgplEKV0pLg8GuCGYmYn9Hr2IG7U3wHRupbv2TaukunIAdTFt1M3YGaUjtadsuyFg/exec';
 
@@ -403,8 +403,8 @@
       renderTable();
       form.reset();
 
-      // 2. Kirim Data secara Terpusat ke Google Sheets
-      if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbzfaxgplEKV0pLg8GuCGYmYn9Hr2IG7U3wHRupbv2TaukunIAdTFt1M3YGaUjtadsuyFg/exec') {
+      // 2. Kirim Data ke Google Sheets
+      if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith('https://script.google.com/')) {
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
