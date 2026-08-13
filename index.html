@@ -22,12 +22,7 @@
       --alpa-bg: #333;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
     body {
       background: var(--bg-gradient);
@@ -41,35 +36,29 @@
 
     .container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       background: var(--card-bg);
       padding: 32px;
       border-radius: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
       border: 1px solid rgba(226, 232, 240, 0.8);
     }
 
-    .header-title {
-      text-align: center;
-      margin-bottom: 24px;
+    .header-title { text-align: center; margin-bottom: 24px; }
+    .header-title h2 { font-size: 24px; font-weight: 700; color: var(--text-main); }
+    .header-title p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+    .admin-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 10px 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
     }
 
-    .header-title h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.5px;
-    }
-
-    .header-title p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
+    .form-group { margin-bottom: 18px; }
 
     label {
       display: block;
@@ -78,7 +67,6 @@
       font-size: 13px;
       color: var(--text-main);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     input, select {
@@ -93,17 +81,11 @@
       outline: none;
     }
 
-    input:focus, select:focus {
-      border-color: var(--primary);
-      background-color: #ffffff;
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-    }
-
     .btn-group {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
       margin-bottom: 32px;
     }
 
@@ -115,132 +97,133 @@
       cursor: pointer;
       font-size: 14px;
       transition: all 0.2s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .btn-submit {
-      background-color: var(--primary);
-      color: white;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
-    }
-
-    .btn-submit:hover {
-      background-color: var(--primary-hover);
     }
 
     .btn-fingerprint {
       background-color: #0f172a;
       color: white;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      font-size: 16px;
     }
 
-    .btn-fingerprint:hover {
-      background-color: #1e293b;
+    .btn-submit {
+      background-color: var(--primary);
+      color: white;
     }
 
-    .btn-clear {
-      background-color: #f1f5f9;
-      color: #64748b;
+    .btn-admin-toggle {
+      background: transparent;
+      color: var(--primary);
+      padding: 6px 12px;
+      font-size: 12px;
+      border: 1px solid var(--primary);
     }
 
-    .btn-clear:hover {
-      background-color: #fee2e2;
-      color: #ef4444;
+    .btn-export {
+      background-color: #10b981;
+      color: white;
+      padding: 8px 12px;
+      font-size: 13px;
     }
 
-    .section-header {
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .summary-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .summary-card span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .summary-card strong {
+      font-size: 18px;
+      color: var(--text-main);
+    }
+
+    .rekap-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .section-header h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-main);
+    .filter-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .table-responsive {
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+    .filter-box input {
+      padding: 6px 10px;
+      width: auto;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      background: white;
-    }
+    .table-responsive { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; background: white; }
+    th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 12px; padding: 12px 16px; text-align: left; }
+    td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; }
 
-    th {
-      background-color: #f8fafc;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    td {
-      padding: 14px 16px;
-      border-bottom: 1px solid #f1f5f9;
-      color: var(--text-main);
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover td {
-      background-color: #f8fafc;
-    }
-
-    .badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: white;
-      display: inline-block;
-    }
-
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; color: white; }
     .badge-hadir { background-color: var(--hadir-bg); }
     .badge-telat { background-color: var(--telat-bg); }
     .badge-izin { background-color: var(--izin-bg); }
     .badge-dispensasi { background-color: var(--dispensasi-bg); }
     .badge-sakit { background-color: var(--sakit-bg); }
     .badge-alpa { background-color: var(--alpa-bg); }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <div class="header-title">
-      <h2>Presensi Harian</h2>
-      <p>Sistem pencatatan kehadiran otomatis</p>
+      <h2>Presensi Sekolah</h2>
+      <p>Sistem Presensi Mandiri & Terverifikasi</p>
     </div>
-    
-    <form id="attendanceForm">
+
+    <!-- Admin Control Bar -->
+    <div class="admin-bar">
+      <span id="roleLabel" style="font-weight: 600; font-size: 13px;">Mode: Siswa</span>
+      <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Login Admin</button>
+    </div>
+
+    <!-- Tampilan Utama Siswa (Tombol Fingerprint Saja) -->
+    <div id="siswaSection">
+      <div class="btn-group">
+        <button type="button" class="btn-fingerprint" id="btnFingerprint">Absen Fingerprint (Hanya di Sekolah)</button>
+      </div>
+    </div>
+
+    <!-- FORM INPUT MANUAL KHUSUS ADMIN (Sembunyi secara Default) -->
+    <form id="adminManualForm" class="hidden">
+      <div style="background: #e0e7ff; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #3730a3; font-weight: 600;">
+        ⚙️ Panel Form Input Manual Admin
+      </div>
+
       <div class="form-group">
         <label for="noAbsen">Nomor Absen</label>
-        <input type="number" id="noAbsen" placeholder="Masukkan nomor absen">
+        <input type="number" id="noAbsen" placeholder="Ketik No. Absen">
       </div>
 
       <div class="form-group">
         <label for="nama">Nama Lengkap</label>
-        <input type="text" id="nama" placeholder="Otomatis terisi via No. Absen / Fingerprint">
+        <input type="text" id="nama" placeholder="Otomatis terisi via No. Absen">
       </div>
 
       <div class="form-group">
@@ -255,16 +238,50 @@
       </div>
 
       <div class="btn-group">
-        <button type="submit" class="btn-submit">Absen Manual</button>
-        <button type="button" class="btn-fingerprint" id="btnFingerprint">Fingerprint</button>
-        <button type="button" class="btn-clear" id="btnClear">Hapus Data HP</button>
+        <button type="submit" class="btn-submit">Simpan Absen Manual</button>
       </div>
     </form>
 
-    <div class="section-header">
-      <h3>Riwayat Lokal Perangkat</h3>
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+    <!-- SECTION REKAP ABSEN PER HARI -->
+    <div class="rekap-header">
+      <h3>Rekap Absensi Harian</h3>
+      <div class="filter-box">
+        <input type="date" id="filterDate">
+        <button type="button" class="btn-export hidden" id="btnExport">Export Excel (CSV)</button>
+      </div>
     </div>
 
+    <!-- Ringkasan Stat Count -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <span>Hadir</span>
+        <strong id="countHadir">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Telat</span>
+        <strong id="countTelat">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Izin</span>
+        <strong id="countIzin">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Sakit</span>
+        <strong id="countSakit">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Dispen</span>
+        <strong id="countDispen">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Alpa</span>
+        <strong id="countAlpa">0</strong>
+      </div>
+    </div>
+
+    <!-- Tabel Data Rekap Harian -->
     <div class="table-responsive">
       <table>
         <thead>
@@ -276,228 +293,293 @@
             <th>Status</th>
           </tr>
         </thead>
-        <tbody id="attendanceTable">
-          <!-- Data terisi via JavaScript -->
-        </tbody>
+        <tbody id="attendanceTable"></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    // =========================================================
-    // 🔗 URL GOOGLE APPS SCRIPT
-    // =========================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfaxgplEKV0pLg8GuCGYmYn9Hr2IG7U3wHRupbv2TaukunIAdTFt1M3YGaUjtadsuyFg/exec';
+    const ADMIN_PIN = "1234";
+    const SCHOOL_LAT = -6.917464; 
+    const SCHOOL_LNG = 107.619122; 
+    const MAX_RADIUS_METERS = 100; 
 
     const studentDatabase = {
-      "1": "ABDILAH ISMAIL",
-      "2": "ABDULLAH AZZAMUL AKRAM",
-      "3": "ALDYANSYAH GEMA GUMILAR",
-      "4": "ADZANI AHSAN AL FARUQ",
-      "5": "ADZRA AQILAH HUSNA",
-      "6": "AKHDAN JABBAR RAHADIKA",
-      "7": "ALDY RAMADHAN",
-      "8": "ALFIN SAMUEL",
-      "9": "ALIF AHMAD ALFARABI",
-      "10": "ALTHAFUL MUHAMMAD ZIYAD",
-      "11": "ALYA NAYSHILLA ZALIANTY",
-      "12": "CANDRA MUHAMMAD RIZKI",
-      "13": "FABIAN SAKHII HAIDAR",
-      "14": "FADIL FADILAH",
-      "15": "FAHRI TRI TANDIAN PRAYOGA",
-      "16": "HAIDAR SYAFIQ ZAIN",
-      "17": "KHANSA PUTRI LATIFAH",
-      "18": "KYANDRA HAMZIQ HAMIZAN",
-      "19": "MOCHAMAD RIDWANNUDIN",
-      "20": "MOHAMAD YUSRA MAHDAN",
-      "21": "MUHAMAD RAISA PRAYOGA",
-      "22": "MUHAMMAD FINZA SAMIR QOLBI",
-      "23": "MUHAMMAD IRFAN",
-      "24": "MUHAMMAD NASER SYARIF GOZALI",
-      "25": "MUHAMMAD RAHLIL IBRAHIM",
-      "26": "MUHAMMAD RAIHAN ARKAN RAHAYU",
-      "27": "MUHAMMAD RIZKY NASRUDIN",
-      "28": "MU'TASHIM VEDA ARTHAGUNG",
-      "29": "NAZHILA ANDHINI",
-      "30": "PRIYANKA ARSYA SAFIERA",
-      "31": "RADITYA PRATAMA",
-      "32": "RAFI SUPRIYADI",
-      "33": "RASYA OKTAVIAN AL HABBSYI",
-      "34": "REYVAN RIZQI RIVALDI",
-      "35": "RIGA HENDRI SUWARA",
-      "36": "RIZQI MAULANA",
-      "37": "RIZQI MISHARY RASHID",
-      "38": "SAFA KHAIRUNISA",
-      "39": "SITI NURSYAHIDAH",
-      "40": "SYAHRIL AHMAD WIJAYA",
-      "41": "VICKY IZAQI ALMUWARIZKI"
+      "1": "Asep Sunandar",
+      "2": "Budi Santoso",
+      "3": "Citra Lestari",
+      "4": "Deni Setiawan",
+      "5": "Eka Putri"
     };
 
-    const form = document.getElementById('attendanceForm');
+    let isAdmin = false;
+    const adminForm = document.getElementById('adminManualForm');
     const inputNoAbsen = document.getElementById('noAbsen');
     const inputNama = document.getElementById('nama');
+    const selectStatus = document.getElementById('status');
     const tableBody = document.getElementById('attendanceTable');
-    const btnClear = document.getElementById('btnClear');
     const btnFingerprint = document.getElementById('btnFingerprint');
+    const btnToggleAdmin = document.getElementById('btnToggleAdmin');
+    const roleLabel = document.getElementById('roleLabel');
+    const filterDateInput = document.getElementById('filterDate');
+    const btnExport = document.getElementById('btnExport');
 
     let attendanceData = JSON.parse(localStorage.getItem('absensiData')) || [];
 
-    inputNoAbsen.addEventListener('input', function() {
-      const val = this.value.trim();
-      if (studentDatabase[val]) {
-        inputNama.value = studentDatabase[val];
+    const todayStr = new Date().toISOString().split('T')[0];
+    filterDateInput.value = todayStr;
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const φ1 = lat1 * Math.PI / 180;
+      const φ2 = lat2 * Math.PI / 180;
+      const Δφ = (lat2 - lat1) * Math.PI / 180;
+      const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c;
+    }
+
+    // Toggle Mode Admin / Siswa
+    btnToggleAdmin.addEventListener('click', function() {
+      if (!isAdmin) {
+        const pin = prompt("Masukkan PIN Admin Sekolah:");
+        if (pin === ADMIN_PIN) {
+          isAdmin = true;
+          roleLabel.innerText = "Mode: Admin Sekolah";
+          btnToggleAdmin.innerText = "Logout Admin";
+          adminForm.classList.remove('hidden'); // Tampilkan form manual khusus Admin
+          btnExport.classList.remove('hidden'); // Tampilkan tombol export CSV
+          alert("Login Admin Berhasil!");
+        } else if (pin !== null) {
+          alert("PIN Salah!");
+        }
       } else {
-        inputNama.value = '';
+        isAdmin = false;
+        roleLabel.innerText = "Mode: Siswa";
+        btnToggleAdmin.innerText = "Login Admin";
+        adminForm.classList.add('hidden'); // Sembunyikan form manual
+        btnExport.classList.add('hidden'); // Sembunyikan tombol export
       }
     });
 
-    function renderTable() {
-      tableBody.innerHTML = '';
+    inputNoAbsen.addEventListener('input', function() {
+      const val = this.value.trim();
+      inputNama.value = studentDatabase[val] || '';
+    });
 
-      if (attendanceData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 24px;">Belum ada riwayat absensi lokal.</td></tr>`;
-        return;
-      }
-
-      attendanceData.forEach((item, index) => {
-        const row = document.createElement('tr');
-        
-        let badgeClass = 'badge-hadir';
-        if (item.status.includes('Telat')) badgeClass = 'badge-telat';
-        if (item.status.includes('Izin')) badgeClass = 'badge-izin';
-        if (item.status.includes('Dispensasi')) badgeClass = 'badge-dispensasi';
-        if (item.status.includes('Sakit')) badgeClass = 'badge-sakit';
-        if (item.status.includes('Alpa')) badgeClass = 'badge-alpa';
-
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${item.waktu}</td>
-          <td><b>${item.noAbsen}</b></td>
-          <td>${item.nama}</td>
-          <td><span class="badge ${badgeClass}">${item.status}</span></td>
-        `;
-        tableBody.appendChild(row);
-      });
+    function getISODateString(dateObj) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
 
-    async function simpanAbsen(noAbsen, nama, statusPilihan) {
-      const now = new Date();
-      const waktuFormat = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
+    function renderTable() {
+      tableBody.innerHTML = '';
+      const selectedDate = filterDateInput.value;
 
+      const filteredData = attendanceData.filter(item => {
+        const itemDate = getISODateString(new Date(item.timestamp || item.rawDate));
+        return itemDate === selectedDate;
+      });
+
+      let counts = { Hadir: 0, Telat: 0, Izin: 0, Sakit: 0, Dispensasi: 0, Alpa: 0 };
+
+      if (filteredData.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 24px;">Tidak ada data presensi pada tanggal ini.</td></tr>`;
+      } else {
+        filteredData.forEach((item, index) => {
+          if (counts[item.status] !== undefined) {
+            counts[item.status]++;
+          }
+
+          const row = document.createElement('tr');
+          let badgeClass = 'badge-hadir';
+          if (item.status === 'Telat') badgeClass = 'badge-telat';
+          if (item.status === 'Izin') badgeClass = 'badge-izin';
+          if (item.status === 'Dispensasi') badgeClass = 'badge-dispensasi';
+          if (item.status === 'Sakit') badgeClass = 'badge-sakit';
+          if (item.status === 'Alpa') badgeClass = 'badge-alpa';
+
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.waktu}</td>
+            <td><b>${item.noAbsen}</b></td>
+            <td>${item.nama}</td>
+            <td><span class="badge ${badgeClass}">${item.status}</span></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      document.getElementById('countHadir').innerText = counts.Hadir;
+      document.getElementById('countTelat').innerText = counts.Telat;
+      document.getElementById('countIzin').innerText = counts.Izin;
+      document.getElementById('countSakit').innerText = counts.Sakit;
+      document.getElementById('countDispen').innerText = counts.Dispensasi;
+      document.getElementById('countAlpa').innerText = counts.Alpa;
+    }
+
+    filterDateInput.addEventListener('change', renderTable);
+
+    function simpanAbsen(noAbsen, nama, statusPilihan) {
+      const now = new Date();
+      const waktuFormat = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
       let statusAkhir = statusPilihan;
 
       if (statusPilihan === 'Hadir') {
         const jam = now.getHours();
         const menit = now.getMinutes();
-
         if (jam > 6 || (jam === 6 && menit > 30)) {
           statusAkhir = 'Telat';
         }
       }
 
-      const newRecord = { waktu: waktuFormat, noAbsen, nama, status: statusAkhir };
+      const newRecord = { 
+        waktu: waktuFormat, 
+        noAbsen, 
+        nama, 
+        status: statusAkhir,
+        timestamp: now.getTime(),
+        rawDate: now.toString()
+      };
       
-      // 1. Simpan di LocalStorage HP
       attendanceData.push(newRecord);
       localStorage.setItem('absensiData', JSON.stringify(attendanceData));
+      
+      filterDateInput.value = getISODateString(now);
       renderTable();
-      form.reset();
-
-      // 2. Kirim Data ke Google Sheets
-      if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith('https://script.google.com/')) {
-        try {
-          await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newRecord)
-          });
-        } catch (err) {
-          console.error('Gagal mengirim ke Google Sheets:', err);
-        }
-      }
+      if(adminForm) adminForm.reset();
     }
 
-    form.addEventListener('submit', function(e) {
+    // Input Manual Khusus Admin
+    adminForm.addEventListener('submit', function(e) {
       e.preventDefault();
+      if (!isAdmin) return;
+
       const noAbsen = inputNoAbsen.value.trim();
       const nama = inputNama.value.trim();
-      const status = document.getElementById('status').value;
+      const status = selectStatus.value;
 
       if (!noAbsen || !nama) {
-        alert('Isi Nomor Absen dan Nama terlebih dahulu!');
+        alert('Isi Nomor Absen dan Nama!');
         return;
       }
 
       simpanAbsen(noAbsen, nama, status);
+      alert('Data berhasil disimpan oleh Admin!');
     });
 
-    btnFingerprint.addEventListener('click', async function() {
-      const status = document.getElementById('status').value;
-      let noAbsen = inputNoAbsen.value.trim();
-      let nama = inputNama.value.trim();
-
-      if (!window.PublicKeyCredential) {
-        alert('Browser/Perangkat tidak mendukung Fingerprint!');
+    // Fingerprint Siswa
+    btnFingerprint.addEventListener('click', function() {
+      if (!navigator.geolocation) {
+        alert('GPS Perangkat tidak didukung!');
         return;
       }
 
-      const savedUser = JSON.parse(localStorage.getItem('fingerprintUser'));
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          const distance = calculateDistance(userLat, userLng, SCHOOL_LAT, SCHOOL_LNG);
 
-      if (savedUser) {
-        try {
-          const assertion = await navigator.credentials.get({
-            publicKey: {
-              challenge: new Uint8Array([1, 2, 3, 4]),
-              timeout: 60000,
-              userVerification: "required"
-            }
-          });
-
-          if (assertion) {
-            simpanAbsen(savedUser.noAbsen, savedUser.nama, status);
-            alert(`Absensi Berhasil! Terdeteksi sebagai: ${savedUser.nama}`);
+          if (distance > MAX_RADIUS_METERS && !isAdmin) {
+            alert(`Di luar area sekolah! Jarak Anda: ${Math.round(distance)} meter.`);
+            return;
           }
-        } catch (err) {
-          alert('Autentikasi fingerprint dibatalkan atau tidak cocok.');
-        }
-      } else {
-        if (!noAbsen || !nama) {
-          alert('Untuk pendaftaran awal, isi Nomor Absen dan Nama terlebih dahulu!');
-          return;
-        }
 
-        try {
-          const credential = await navigator.credentials.create({
-            publicKey: {
-              challenge: new Uint8Array([1, 2, 3, 4]),
-              rp: { name: "Aplikasi Absensi" },
-              user: { id: new Uint8Array([1, 2, 3, 4]), name: nama, displayName: nama },
-              pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-              timeout: 60000,
-              authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
-            }
-          });
-
-          if (credential) {
-            localStorage.setItem('fingerprintUser', JSON.stringify({ noAbsen, nama }));
-            simpanAbsen(noAbsen, nama, status);
-            alert(`Pendaftaran Fingerprint Berhasil!`);
+          if (!window.PublicKeyCredential) {
+            alert('Perangkat tidak mendukung Fingerprint!');
+            return;
           }
-        } catch (err) {
-          alert('Pendaftaran fingerprint dibatalkan/gagal.');
-        }
-      }
+
+          const savedUser = JSON.parse(localStorage.getItem('fingerprintUser'));
+
+          if (savedUser) {
+            try {
+              const assertion = await navigator.credentials.get({
+                publicKey: { challenge: new Uint8Array([1, 2, 3, 4]), timeout: 60000, userVerification: "required" }
+              });
+
+              if (assertion) {
+                simpanAbsen(savedUser.noAbsen, savedUser.nama, 'Hadir');
+                alert(`Absensi Berhasil! Terdeteksi: ${savedUser.nama}`);
+              }
+            } catch (err) {
+              alert('Autentikasi fingerprint dibatalkan.');
+            }
+          } else {
+            const noAbsen = prompt("Pendaftaran Awal: Masukkan Nomor Absen:");
+            if (!noAbsen || !studentDatabase[noAbsen]) {
+              alert("Nomor Absen tidak ditemukan!");
+              return;
+            }
+            const nama = studentDatabase[noAbsen];
+
+            try {
+              const credential = await navigator.credentials.create({
+                publicKey: {
+                  challenge: new Uint8Array([1, 2, 3, 4]),
+                  rp: { name: "Absensi Sekolah" },
+                  user: { id: new Uint8Array([1, 2, 3, 4]), name: nama, displayName: nama },
+                  pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                  timeout: 60000,
+                  authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
+                }
+              });
+
+              if (credential) {
+                localStorage.setItem('fingerprintUser', JSON.stringify({ noAbsen, nama }));
+                simpanAbsen(noAbsen, nama, 'Hadir');
+                alert(`Pendaftaran & Absensi Berhasil!`);
+              }
+            } catch (err) {
+              alert('Pendaftaran fingerprint gagal.');
+            }
+          }
+        },
+        (error) => {
+          alert('Gagal mengambil lokasi GPS. Aktifkan Izin Lokasi!');
+        },
+        { enableHighAccuracy: true }
+      );
     });
 
-    btnClear.addEventListener('click', function() {
-      if (attendanceData.length === 0) return;
-      if (confirm('Hapus riwayat lokal di HP ini?')) {
-        attendanceData = [];
-        localStorage.removeItem('absensiData');
-        localStorage.removeItem('fingerprintUser');
-        renderTable();
+    // Export CSV Khusus Admin
+    btnExport.addEventListener('click', function() {
+      if (!isAdmin) {
+        alert("Akses Ditolak!");
+        return;
       }
+
+      const selectedDate = filterDateInput.value;
+      const filteredData = attendanceData.filter(item => {
+        const itemDate = getISODateString(new Date(item.timestamp || item.rawDate));
+        return itemDate === selectedDate;
+      });
+
+      if (filteredData.length === 0) {
+        alert("Tidak ada data untuk diexport pada tanggal ini!");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,No,Jam,No Absen,Nama,Status\n";
+      filteredData.forEach((item, index) => {
+        csvContent += `${index + 1},${item.waktu},${item.noAbsen},${item.nama},${item.status}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Rekap_Absen_${selectedDate}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
 
     renderTable();
