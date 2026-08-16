@@ -81,6 +81,10 @@
       outline: none;
     }
 
+    input:read-only {
+      background-color: #e2e8f0;
+    }
+
     .btn-group {
       display: flex;
       flex-direction: column;
@@ -102,7 +106,13 @@
     .btn-fingerprint {
       background-color: #0f172a;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
+    }
+
+    .btn-manual-siswa {
+      background-color: var(--primary);
+      color: white;
+      font-size: 15px;
     }
 
     .btn-submit {
@@ -194,7 +204,7 @@
   <div class="container">
     <div class="header-title">
       <h2>Presensi Sekolah</h2>
-      <p>Sistem Presensi Mandiri & Terverifikasi</p>
+      <p>Sistem Presensi Realtime Database</p>
     </div>
 
     <!-- Admin Control Bar -->
@@ -203,32 +213,43 @@
       <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Login Admin</button>
     </div>
 
-    <!-- Tampilan Utama Siswa (Tombol Fingerprint Saja) -->
+    <!-- TAMPILAN UTAMA ABSEN SISWA -->
     <div id="siswaSection">
+      <div class="form-group">
+        <label for="noAbsenSiswa">Nomor Absen</label>
+        <input type="number" id="noAbsenSiswa" placeholder="Masukkan No. Absen Kamu">
+      </div>
+
+      <div class="form-group">
+        <label for="namaSiswa">Nama Lengkap</label>
+        <input type="text" id="namaSiswa" placeholder="Otomatis terisi via No. Absen" readonly>
+      </div>
+
       <div class="btn-group">
-        <button type="button" class="btn-fingerprint" id="btnFingerprint">Absen Fingerprint (Hanya di Sekolah)</button>
+        <button type="button" class="btn-manual-siswa" id="btnManualSiswa">Absen Manual</button>
+        <button type="button" class="btn-fingerprint" id="btnFingerprint">Absen Fingerprint</button>
       </div>
     </div>
 
-    <!-- FORM INPUT MANUAL KHUSUS ADMIN (Sembunyi secara Default) -->
+    <!-- FORM INPUT ADMIN (HANYA MUNCUL KETIKA ADMIN LOGIN) -->
     <form id="adminManualForm" class="hidden">
       <div style="background: #e0e7ff; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #3730a3; font-weight: 600;">
-        ⚙️ Panel Form Input Manual Admin
+        ⚙️ Panel Input Status Admin (Izin / Sakit / Dispen / Alpa)
       </div>
 
       <div class="form-group">
-        <label for="noAbsen">Nomor Absen</label>
-        <input type="number" id="noAbsen" placeholder="Ketik No. Absen">
+        <label for="noAbsenAdmin">Nomor Absen Siswa</label>
+        <input type="number" id="noAbsenAdmin" placeholder="Ketik No. Absen">
       </div>
 
       <div class="form-group">
-        <label for="nama">Nama Lengkap</label>
-        <input type="text" id="nama" placeholder="Otomatis terisi via No. Absen">
+        <label for="namaAdmin">Nama Lengkap</label>
+        <input type="text" id="namaAdmin" placeholder="Otomatis terisi">
       </div>
 
       <div class="form-group">
-        <label for="status">Keterangan Status</label>
-        <select id="status">
+        <label for="statusAdmin">Keterangan Status</label>
+        <select id="statusAdmin">
           <option value="Hadir">Hadir</option>
           <option value="Izin">Izin</option>
           <option value="Dispensasi">Dispensasi</option>
@@ -238,7 +259,7 @@
       </div>
 
       <div class="btn-group">
-        <button type="submit" class="btn-submit">Simpan Absen Manual</button>
+        <button type="submit" class="btn-submit">Simpan Absen via Admin</button>
       </div>
     </form>
 
@@ -255,30 +276,12 @@
 
     <!-- Ringkasan Stat Count -->
     <div class="summary-grid">
-      <div class="summary-card">
-        <span>Hadir</span>
-        <strong id="countHadir">0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Telat</span>
-        <strong id="countTelat">0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Izin</span>
-        <strong id="countIzin">0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Sakit</span>
-        <strong id="countSakit">0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Dispen</span>
-        <strong id="countDispen">0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Alpa</span>
-        <strong id="countAlpa">0</strong>
-      </div>
+      <div class="summary-card"><span>Hadir</span><strong id="countHadir">0</strong></div>
+      <div class="summary-card"><span>Telat</span><strong id="countTelat">0</strong></div>
+      <div class="summary-card"><span>Izin</span><strong id="countIzin">0</strong></div>
+      <div class="summary-card"><span>Sakit</span><strong id="countSakit">0</strong></div>
+      <div class="summary-card"><span>Dispen</span><strong id="countDispen">0</strong></div>
+      <div class="summary-card"><span>Alpa</span><strong id="countAlpa">0</strong></div>
     </div>
 
     <!-- Tabel Data Rekap Harian -->
@@ -298,33 +301,92 @@
     </div>
   </div>
 
-  <script>
+  <!-- FIREBASE SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDO-RpsbA8-ov-Ud66mgu2DTmaPsKlXgnc",
+      authDomain: "absensi-kelas-14804.firebaseapp.com",
+      databaseURL: "https://absensi-kelas-14804-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "absensi-kelas-14804",
+      storageBucket: "absensi-kelas-14804.firebasestorage.app",
+      messagingSenderId: "751554502276",
+      appId: "1:751554502276:web:94433b99f59b6d583d2cd1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const absensiRef = ref(db, 'absensi');
+
     const ADMIN_PIN = "1234";
-    const SCHOOL_LAT = -6.917464; 
-    const SCHOOL_LNG = 107.619122; 
+    const SCHOOL_LAT = -6.890391; 
+    const SCHOOL_LNG = 107.558687; 
     const MAX_RADIUS_METERS = 100; 
 
     const studentDatabase = {
-      "1": "Asep Sunandar",
-      "2": "Budi Santoso",
-      "3": "Citra Lestari",
-      "4": "Deni Setiawan",
-      "5": "Eka Putri"
+      "1": "ABDILAH ISMAIL",
+      "2": "ABDULLAH AZZAMUL AKRAM",
+      "3": "ALDYANSYAH GEMA GUMILAR",
+      "4": "ADZANI AHSAN AL FARUQ",
+      "5": "ADZRA AQILAH HUSNA",
+      "6": "AKHDAN JABBAR RAHADIKA",
+      "7": "ALDY RAMADHAN",
+      "8": "ALFIN SAMUEL",
+      "9": "ALIF AHMAD ALFARABI",
+      "10": "ALTHAFUL MUHAMMAD ZIYAD",
+      "11": "ALYA NAYSHILLA ZALIANTY",
+      "12": "CANDRA MUHAMMAD RIZKI",
+      "13": "FABIAN SAKHII HAIDAR",
+      "14": "FADIL FADILAH",
+      "15": "FAHRI TRI TANDIAN PRAYOGA",
+      "16": "HAIDAR SYAFIQ ZAIN",
+      "17": "KHANSA PUTRI LATIFAH",
+      "18": "KYANDRA HAMZIQ HAMIZAN",
+      "19": "MOCHAMAD RIDWANNUDIN",
+      "20": "MOHAMAD YUSRA MAHDAN",
+      "21": "MUHAMAD RAISA PRAYOGA",
+      "22": "MUHAMMAD FINZA SAMIR QOLBI",
+      "23": "MUHAMMAD IRFAN",
+      "24": "MUHAMMAD NASER SYARIF GOZALI",
+      "25": "MUHAMMAD RAHLIL IBRAHIM",
+      "26": "MUHAMMAD RAIHAN ARKAN RAHAYU",
+      "27": "MUHAMMAD RIZKY NASRUDIN",
+      "28": "MU'TASHIM VEDA ARTHAGUNG",
+      "29": "NAZHILA ANDHINI",
+      "30": "PRIYANKA ARSYA SAFIERA",
+      "31": "RADITYA PRATAMA",
+      "32": "RAFI SUPRIYADI",
+      "33": "RASYA OKTAVIAN AL HABBSYI",
+      "34": "REYVAN RIZQI RIVALDI",
+      "35": "RIGA HENDRI SUWARA",
+      "36": "RIZQI MAULANA",
+      "37": "RIZQI MISHARY RASHID",
+      "38": "SAFA KHAIRUNISA",
+      "39": "SITI NURSYAHIDAH",
+      "40": "SYAHRIL AHMAD WIJAYA",
+      "41": "VICKY IZAQI ALMUWARIZKI"
     };
 
     let isAdmin = false;
-    const adminForm = document.getElementById('adminManualForm');
-    const inputNoAbsen = document.getElementById('noAbsen');
-    const inputNama = document.getElementById('nama');
-    const selectStatus = document.getElementById('status');
-    const tableBody = document.getElementById('attendanceTable');
+    let attendanceData = [];
+
+    const inputNoAbsenSiswa = document.getElementById('noAbsenSiswa');
+    const inputNamaSiswa = document.getElementById('namaSiswa');
+    const btnManualSiswa = document.getElementById('btnManualSiswa');
     const btnFingerprint = document.getElementById('btnFingerprint');
+
+    const adminForm = document.getElementById('adminManualForm');
+    const inputNoAbsenAdmin = document.getElementById('noAbsenAdmin');
+    const inputNamaAdmin = document.getElementById('namaAdmin');
+    const selectStatusAdmin = document.getElementById('statusAdmin');
+
+    const tableBody = document.getElementById('attendanceTable');
     const btnToggleAdmin = document.getElementById('btnToggleAdmin');
     const roleLabel = document.getElementById('roleLabel');
     const filterDateInput = document.getElementById('filterDate');
     const btnExport = document.getElementById('btnExport');
-
-    let attendanceData = JSON.parse(localStorage.getItem('absensiData')) || [];
 
     const todayStr = new Date().toISOString().split('T')[0];
     filterDateInput.value = todayStr;
@@ -344,7 +406,31 @@
       return R * c;
     }
 
-    // Toggle Mode Admin / Siswa
+    // Auto Fill Nama Siswa di Form Siswa
+    inputNoAbsenSiswa.addEventListener('input', function() {
+      const val = this.value.trim();
+      inputNamaSiswa.value = studentDatabase[val] || '';
+    });
+
+    // Auto Fill Nama Siswa di Form Admin
+    inputNoAbsenAdmin.addEventListener('input', function() {
+      const val = this.value.trim();
+      inputNamaAdmin.value = studentDatabase[val] || '';
+    });
+
+    // Realtime Database Listener
+    onValue(absensiRef, (snapshot) => {
+      const data = snapshot.val();
+      attendanceData = [];
+      if (data) {
+        Object.keys(data).forEach(key => {
+          attendanceData.push(data[key]);
+        });
+      }
+      renderTable();
+    });
+
+    // Toggle Login Admin
     btnToggleAdmin.addEventListener('click', function() {
       if (!isAdmin) {
         const pin = prompt("Masukkan PIN Admin Sekolah:");
@@ -352,8 +438,8 @@
           isAdmin = true;
           roleLabel.innerText = "Mode: Admin Sekolah";
           btnToggleAdmin.innerText = "Logout Admin";
-          adminForm.classList.remove('hidden'); // Tampilkan form manual khusus Admin
-          btnExport.classList.remove('hidden'); // Tampilkan tombol export CSV
+          adminForm.classList.remove('hidden');
+          btnExport.classList.remove('hidden');
           alert("Login Admin Berhasil!");
         } else if (pin !== null) {
           alert("PIN Salah!");
@@ -362,14 +448,9 @@
         isAdmin = false;
         roleLabel.innerText = "Mode: Siswa";
         btnToggleAdmin.innerText = "Login Admin";
-        adminForm.classList.add('hidden'); // Sembunyikan form manual
-        btnExport.classList.add('hidden'); // Sembunyikan tombol export
+        adminForm.classList.add('hidden');
+        btnExport.classList.add('hidden');
       }
-    });
-
-    inputNoAbsen.addEventListener('input', function() {
-      const val = this.value.trim();
-      inputNama.value = studentDatabase[val] || '';
     });
 
     function getISODateString(dateObj) {
@@ -432,6 +513,7 @@
       const waktuFormat = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
       let statusAkhir = statusPilihan;
 
+      // Batas Jam Absen (06:30)
       if (statusPilihan === 'Hadir') {
         const jam = now.getHours();
         const menit = now.getMinutes();
@@ -448,34 +530,58 @@
         timestamp: now.getTime(),
         rawDate: now.toString()
       };
-      
-      attendanceData.push(newRecord);
-      localStorage.setItem('absensiData', JSON.stringify(attendanceData));
-      
-      filterDateInput.value = getISODateString(now);
-      renderTable();
-      if(adminForm) adminForm.reset();
+
+      push(absensiRef, newRecord)
+        .then(() => {
+          filterDateInput.value = getISODateString(now);
+          inputNoAbsenSiswa.value = '';
+          inputNamaSiswa.value = '';
+          if(adminForm) adminForm.reset();
+        })
+        .catch((err) => {
+          alert("Gagal menyimpan data: " + err.message);
+        });
     }
 
-    // Input Manual Khusus Admin
-    adminForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!isAdmin) return;
-
-      const noAbsen = inputNoAbsen.value.trim();
-      const nama = inputNama.value.trim();
-      const status = selectStatus.value;
+    // 1. ABSEN MANUAL SISWA (Wajib GPS & Kunci Status 'Hadir')
+    btnManualSiswa.addEventListener('click', function() {
+      const noAbsen = inputNoAbsenSiswa.value.trim();
+      const nama = inputNamaSiswa.value.trim();
 
       if (!noAbsen || !nama) {
-        alert('Isi Nomor Absen dan Nama!');
+        alert('Masukkan Nomor Absen yang valid!');
         return;
       }
 
-      simpanAbsen(noAbsen, nama, status);
-      alert('Data berhasil disimpan oleh Admin!');
+      if (!navigator.geolocation) {
+        alert('GPS Perangkat tidak didukung!');
+        return;
+      }
+
+      // Cek Koordinat GPS
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          const distance = calculateDistance(userLat, userLng, SCHOOL_LAT, SCHOOL_LNG);
+
+          if (distance > MAX_RADIUS_METERS && !isAdmin) {
+            alert(`Di luar area sekolah! Jarak Anda: ${Math.round(distance)} meter dari sekolah.`);
+            return;
+          }
+
+          // Simpan dengan status otomatis "Hadir"
+          simpanAbsen(noAbsen, nama, 'Hadir');
+          alert(`Absensi Manual Berhasil untuk ${nama}!`);
+        },
+        (error) => {
+          alert('Gagal mengambil lokasi GPS. Aktifkan Izin Lokasi di browser!');
+        },
+        { enableHighAccuracy: true }
+      );
     });
 
-    // Fingerprint Siswa
+    // 2. ABSEN FINGERPRINT SISWA (Wajib GPS & Kunci Status 'Hadir')
     btnFingerprint.addEventListener('click', function() {
       if (!navigator.geolocation) {
         alert('GPS Perangkat tidak didukung!');
@@ -508,13 +614,13 @@
 
               if (assertion) {
                 simpanAbsen(savedUser.noAbsen, savedUser.nama, 'Hadir');
-                alert(`Absensi Berhasil! Terdeteksi: ${savedUser.nama}`);
+                alert(`Absensi Fingerprint Berhasil! (${savedUser.nama})`);
               }
             } catch (err) {
               alert('Autentikasi fingerprint dibatalkan.');
             }
           } else {
-            const noAbsen = prompt("Pendaftaran Awal: Masukkan Nomor Absen:");
+            const noAbsen = prompt("Pendaftaran Awal Fingerprint: Masukkan Nomor Absen:");
             if (!noAbsen || !studentDatabase[noAbsen]) {
               alert("Nomor Absen tidak ditemukan!");
               return;
@@ -550,7 +656,25 @@
       );
     });
 
-    // Export CSV Khusus Admin
+    // 3. INPUT MANUAL ADMIN (Bisa pilih Izin/Sakit/Dispen/Alpa)
+    adminForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!isAdmin) return;
+
+      const noAbsen = inputNoAbsenAdmin.value.trim();
+      const nama = inputNamaAdmin.value.trim();
+      const status = selectStatusAdmin.value;
+
+      if (!noAbsen || !nama) {
+        alert('Isi Nomor Absen dan Nama!');
+        return;
+      }
+
+      simpanAbsen(noAbsen, nama, status);
+      alert('Data berhasil disimpan oleh Admin!');
+    });
+
+    // 4. EXPORT CSV (Khusus Admin)
     btnExport.addEventListener('click', function() {
       if (!isAdmin) {
         alert("Akses Ditolak!");
@@ -581,8 +705,6 @@
       link.click();
       document.body.removeChild(link);
     });
-
-    renderTable();
   </script>
 </body>
 </html>
