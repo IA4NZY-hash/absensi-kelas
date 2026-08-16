@@ -234,7 +234,7 @@
     <!-- FORM INPUT ADMIN (HANYA MUNCUL KETIKA ADMIN LOGIN) -->
     <form id="adminManualForm" class="hidden">
       <div style="background: #e0e7ff; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #3730a3; font-weight: 600;">
-        ⚙️ Panel Input Status Admin (Izin / Sakit / Dispen / Alpa)
+        Panel Input Status Admin (Izin / Sakit / Dispen / Alpa)
       </div>
 
       <div class="form-group">
@@ -436,7 +436,7 @@
         const pin = prompt("Masukkan PIN Admin Sekolah:");
         if (pin === ADMIN_PIN) {
           isAdmin = true;
-          roleLabel.innerText = "Mode: Admin Sekolah";
+          roleLabel.innerText = "Mode: Admin Kelas";
           btnToggleAdmin.innerText = "Logout Admin";
           adminForm.classList.remove('hidden');
           btnExport.classList.remove('hidden');
