@@ -14,11 +14,11 @@
       --text-main: #0f172a;
       --text-muted: #64748b;
       
-      --hadir-bg: #10b981;
-      --telat-bg: #f5130b;
-      --izin-bg: #f5d20b;
-      --dispensasi-bg: #8b5cf6;
-      --sakit-bg: #fc892c;
+      --hadir-bg: #05d892;
+      --telat-bg: #ffae00;
+      --izin-bg: #002ec7;
+      --dispensasi-bg: #6f47cc;
+      --sakit-bg: #ef4444;
       --alpa-bg: #333;
     }
 
@@ -207,13 +207,11 @@
       <p>Sistem Presensi Realtime Database</p>
     </div>
 
-    <!-- Admin Control Bar -->
     <div class="admin-bar">
       <span id="roleLabel" style="font-weight: 600; font-size: 13px;">Mode: Siswa</span>
       <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Login Admin</button>
     </div>
 
-    <!-- TAMPILAN UTAMA ABSEN SISWA -->
     <div id="siswaSection">
       <div class="form-group">
         <label for="noAbsenSiswa">Nomor Absen</label>
@@ -231,10 +229,9 @@
       </div>
     </div>
 
-    <!-- FORM INPUT ADMIN (HANYA MUNCUL KETIKA ADMIN LOGIN) -->
     <form id="adminManualForm" class="hidden">
       <div style="background: #e0e7ff; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #3730a3; font-weight: 600;">
-        Panel Input Status Admin (Izin / Sakit / Dispen / Alpa)
+        Panel Input Manual Admin (Izin / Sakit / Dispen / Alpa)
       </div>
 
       <div class="form-group">
@@ -265,7 +262,6 @@
 
     <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
 
-    <!-- SECTION REKAP ABSEN PER HARI -->
     <div class="rekap-header">
       <h3>Rekap Absensi Harian</h3>
       <div class="filter-box">
@@ -274,7 +270,6 @@
       </div>
     </div>
 
-    <!-- Ringkasan Stat Count -->
     <div class="summary-grid">
       <div class="summary-card"><span>Hadir</span><strong id="countHadir">0</strong></div>
       <div class="summary-card"><span>Telat</span><strong id="countTelat">0</strong></div>
@@ -284,7 +279,6 @@
       <div class="summary-card"><span>Alpa</span><strong id="countAlpa">0</strong></div>
     </div>
 
-    <!-- Tabel Data Rekap Harian -->
     <div class="table-responsive">
       <table>
         <thead>
@@ -301,7 +295,6 @@
     </div>
   </div>
 
-  <!-- FIREBASE SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -372,6 +365,7 @@
     let isAdmin = false;
     let attendanceData = [];
 
+    const siswaSection = document.getElementById('siswaSection');
     const inputNoAbsenSiswa = document.getElementById('noAbsenSiswa');
     const inputNamaSiswa = document.getElementById('namaSiswa');
     const btnManualSiswa = document.getElementById('btnManualSiswa');
@@ -406,19 +400,16 @@
       return R * c;
     }
 
-    // Auto Fill Nama Siswa di Form Siswa
     inputNoAbsenSiswa.addEventListener('input', function() {
       const val = this.value.trim();
       inputNamaSiswa.value = studentDatabase[val] || '';
     });
 
-    // Auto Fill Nama Siswa di Form Admin
     inputNoAbsenAdmin.addEventListener('input', function() {
       const val = this.value.trim();
       inputNamaAdmin.value = studentDatabase[val] || '';
     });
 
-    // Realtime Database Listener
     onValue(absensiRef, (snapshot) => {
       const data = snapshot.val();
       attendanceData = [];
@@ -430,14 +421,14 @@
       renderTable();
     });
 
-    // Toggle Login Admin
     btnToggleAdmin.addEventListener('click', function() {
       if (!isAdmin) {
         const pin = prompt("Masukkan PIN Admin Sekolah:");
         if (pin === ADMIN_PIN) {
           isAdmin = true;
-          roleLabel.innerText = "Mode: Admin Kelas";
+          roleLabel.innerText = "Mode: Admin Sekolah";
           btnToggleAdmin.innerText = "Logout Admin";
+          siswaSection.classList.add('hidden');
           adminForm.classList.remove('hidden');
           btnExport.classList.remove('hidden');
           alert("Login Admin Berhasil!");
@@ -448,6 +439,7 @@
         isAdmin = false;
         roleLabel.innerText = "Mode: Siswa";
         btnToggleAdmin.innerText = "Login Admin";
+        siswaSection.classList.remove('hidden');
         adminForm.classList.add('hidden');
         btnExport.classList.add('hidden');
       }
@@ -458,6 +450,15 @@
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
       const day = String(dateObj.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
+    }
+
+    // 🔍 FUNGSI CEK SUDAH ABSEN HARI INI ATAU BELUM
+    function sudahAbsenHariIni(noAbsen) {
+      const today = getISODateString(new Date());
+      return attendanceData.some(item => {
+        const itemDate = getISODateString(new Date(item.timestamp || item.rawDate));
+        return itemDate === today && String(item.noAbsen) === String(noAbsen);
+      });
     }
 
     function renderTable() {
@@ -509,11 +510,16 @@
     filterDateInput.addEventListener('change', renderTable);
 
     function simpanAbsen(noAbsen, nama, statusPilihan) {
+      // PERIKSA LAGI SEBELUM SIMPAN
+      if (sudahAbsenHariIni(noAbsen)) {
+        alert(`Gagal! Nomor Absen ${noAbsen} (${nama}) sudah melakukan absensi hari ini.`);
+        return;
+      }
+
       const now = new Date();
       const waktuFormat = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
       let statusAkhir = statusPilihan;
 
-      // Batas Jam Absen (06:30)
       if (statusPilihan === 'Hadir') {
         const jam = now.getHours();
         const menit = now.getMinutes();
@@ -543,7 +549,7 @@
         });
     }
 
-    // 1. ABSEN MANUAL SISWA (Wajib GPS & Kunci Status 'Hadir')
+    // 1. ABSEN MANUAL SISWA
     btnManualSiswa.addEventListener('click', function() {
       const noAbsen = inputNoAbsenSiswa.value.trim();
       const nama = inputNamaSiswa.value.trim();
@@ -553,12 +559,17 @@
         return;
       }
 
+      // CEK DULU SEBELUM MINTA GPS
+      if (sudahAbsenHariIni(noAbsen)) {
+        alert(`Nomor Absen ${noAbsen} (${nama}) sudah melakukan absensi hari ini!`);
+        return;
+      }
+
       if (!navigator.geolocation) {
         alert('GPS Perangkat tidak didukung!');
         return;
       }
 
-      // Cek Koordinat GPS
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLat = position.coords.latitude;
@@ -570,7 +581,6 @@
             return;
           }
 
-          // Simpan dengan status otomatis "Hadir"
           simpanAbsen(noAbsen, nama, 'Hadir');
           alert(`Absensi Manual Berhasil untuk ${nama}!`);
         },
@@ -581,7 +591,7 @@
       );
     });
 
-    // 2. ABSEN FINGERPRINT SISWA (Wajib GPS & Kunci Status 'Hadir')
+    // 2. ABSEN FINGERPRINT SISWA
     btnFingerprint.addEventListener('click', function() {
       if (!navigator.geolocation) {
         alert('GPS Perangkat tidak didukung!');
@@ -607,6 +617,12 @@
           const savedUser = JSON.parse(localStorage.getItem('fingerprintUser'));
 
           if (savedUser) {
+            // CEK APAKAH SISWA DENGAN FINGERPRINT INI SUDAH ABSEN HARI INI
+            if (sudahAbsenHariIni(savedUser.noAbsen)) {
+              alert(`Nomor Absen ${savedUser.noAbsen} (${savedUser.nama}) sudah melakukan absensi hari ini!`);
+              return;
+            }
+
             try {
               const assertion = await navigator.credentials.get({
                 publicKey: { challenge: new Uint8Array([1, 2, 3, 4]), timeout: 60000, userVerification: "required" }
@@ -625,6 +641,12 @@
               alert("Nomor Absen tidak ditemukan!");
               return;
             }
+
+            if (sudahAbsenHariIni(noAbsen)) {
+              alert(`Nomor Absen ${noAbsen} sudah melakukan absensi hari ini!`);
+              return;
+            }
+
             const nama = studentDatabase[noAbsen];
 
             try {
@@ -656,7 +678,7 @@
       );
     });
 
-    // 3. INPUT MANUAL ADMIN (Bisa pilih Izin/Sakit/Dispen/Alpa)
+    // 3. INPUT MANUAL ADMIN
     adminForm.addEventListener('submit', function(e) {
       e.preventDefault();
       if (!isAdmin) return;
@@ -670,11 +692,16 @@
         return;
       }
 
+      if (sudahAbsenHariIni(noAbsen)) {
+        alert(`Nomor Absen ${noAbsen} (${nama}) sudah terdata pada hari ini!`);
+        return;
+      }
+
       simpanAbsen(noAbsen, nama, status);
       alert('Data berhasil disimpan oleh Admin!');
     });
 
-    // 4. EXPORT CSV (Khusus Admin)
+    // 4. EXPORT CSV
     btnExport.addEventListener('click', function() {
       if (!isAdmin) {
         alert("Akses Ditolak!");
