@@ -31,7 +31,7 @@
       padding: 30px 15px;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
     }
 
     .container {
@@ -103,22 +103,9 @@
       transition: all 0.2s ease;
     }
 
-    .btn-fingerprint {
-      background-color: #0f172a;
-      color: white;
-      font-size: 15px;
-    }
-
-    .btn-manual-siswa {
-      background-color: var(--primary);
-      color: white;
-      font-size: 15px;
-    }
-
-    .btn-submit {
-      background-color: var(--primary);
-      color: white;
-    }
+    .btn-fingerprint { background-color: #0f172a; color: white; font-size: 15px; }
+    .btn-manual-siswa { background-color: var(--primary); color: white; font-size: 15px; }
+    .btn-submit { background-color: var(--primary); color: white; }
 
     .btn-admin-toggle {
       background: transparent;
@@ -128,12 +115,7 @@
       border: 1px solid var(--primary);
     }
 
-    .btn-export {
-      background-color: #10b981;
-      color: white;
-      padding: 8px 12px;
-      font-size: 13px;
-    }
+    .btn-export { background-color: #10b981; color: white; padding: 8px 12px; font-size: 13px; }
 
     .summary-grid {
       display: grid;
@@ -150,18 +132,8 @@
       text-align: center;
     }
 
-    .summary-card span {
-      display: block;
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .summary-card strong {
-      font-size: 18px;
-      color: var(--text-main);
-    }
+    .summary-card span { display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .summary-card strong { font-size: 18px; color: var(--text-main); }
 
     .rekap-header {
       display: flex;
@@ -172,16 +144,8 @@
       gap: 10px;
     }
 
-    .filter-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .filter-box input {
-      padding: 6px 10px;
-      width: auto;
-    }
+    .filter-box { display: flex; align-items: center; gap: 8px; }
+    .filter-box input { padding: 6px 10px; width: auto; }
 
     .table-responsive { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; background: white; }
@@ -197,30 +161,63 @@
     .badge-alpa { background-color: var(--alpa-bg); }
 
     .hidden { display: none !important; }
+
+    .login-wrapper {
+      max-width: 400px;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <!-- ================= HALAMAN LOGIN (MUNCUL PERTAMA KALI) ================= -->
+  <div id="loginScreen" class="container login-wrapper">
+    <div class="header-title">
+      <h2>Login Absensi</h2>
+      <p>Kunci Akun Siswa di Perangkat Ini</p>
+    </div>
+
+    <div class="form-group">
+      <label for="loginNoAbsen">Nomor Absen Siswa</label>
+      <input type="number" id="loginNoAbsen" placeholder="Masukkan No. Absen Kamu">
+    </div>
+
+    <div class="form-group">
+      <label for="loginPin">PIN Siswa (Default: 1234)</label>
+      <input type="password" id="loginPin" placeholder="Masukkan PIN">
+    </div>
+
+    <button type="button" class="btn-submit" id="btnLoginSiswaSubmit" style="width: 100%; margin-top: 10px;">
+      Masuk & Kunci Perangkat
+    </button>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Mode Admin</button>
+    </div>
+  </div>
+
+  <!-- ================= TAMPILAN UTAMA ABSEN (TERSEMBUNYI SEBELUM LOGIN) ================= -->
+  <div id="mainScreen" class="container hidden">
     <div class="header-title">
       <h2>Presensi Sekolah</h2>
       <p>Sistem Presensi Realtime Database</p>
     </div>
 
     <div class="admin-bar">
-      <span id="roleLabel" style="font-weight: 600; font-size: 13px;">Mode: Siswa</span>
-      <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Login Admin</button>
+      <span id="roleLabel" style="font-weight: 600; font-size: 13px;">Status: Login Siswa</span>
+      <button type="button" class="btn-admin-toggle hidden" id="btnLogoutAdmin">Keluar Mode Admin</button>
     </div>
 
+    <!-- PANEL ABSEN SISWA -->
     <div id="siswaSection">
       <div class="form-group">
         <label for="noAbsenSiswa">Nomor Absen</label>
-        <input type="number" id="noAbsenSiswa" placeholder="Masukkan No. Absen Kamu">
+        <input type="number" id="noAbsenSiswa" readonly>
       </div>
 
       <div class="form-group">
         <label for="namaSiswa">Nama Lengkap</label>
-        <input type="text" id="namaSiswa" placeholder="Otomatis terisi via No. Absen" readonly>
+        <input type="text" id="namaSiswa" readonly>
       </div>
 
       <div class="btn-group">
@@ -229,6 +226,7 @@
       </div>
     </div>
 
+    <!-- PANEL INPUT ADMIN -->
     <form id="adminManualForm" class="hidden">
       <div style="background: #e0e7ff; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #3730a3; font-weight: 600;">
         Panel Input Manual Admin (Izin / Sakit / Dispen / Alpa)
@@ -241,7 +239,7 @@
 
       <div class="form-group">
         <label for="namaAdmin">Nama Lengkap</label>
-        <input type="text" id="namaAdmin" placeholder="Otomatis terisi">
+        <input type="text" id="namaAdmin" placeholder="Otomatis terisi" readonly>
       </div>
 
       <div class="form-group">
@@ -319,51 +317,58 @@
     const MAX_RADIUS_METERS = 100; 
 
     const studentDatabase = {
-      "1": "ABDILAH ISMAIL",
-      "2": "ABDULLAH AZZAMUL AKRAM",
-      "3": "ALDYANSYAH GEMA GUMILAR",
-      "4": "ADZANI AHSAN AL FARUQ",
-      "5": "ADZRA AQILAH HUSNA",
-      "6": "AKHDAN JABBAR RAHADIKA",
-      "7": "ALDY RAMADHAN",
-      "8": "ALFIN SAMUEL",
-      "9": "ALIF AHMAD ALFARABI",
-      "10": "ALTHAFUL MUHAMMAD ZIYAD",
-      "11": "ALYA NAYSHILLA ZALIANTY",
-      "12": "CANDRA MUHAMMAD RIZKI",
-      "13": "FABIAN SAKHII HAIDAR",
-      "14": "FADIL FADILAH",
-      "15": "FAHRI TRI TANDIAN PRAYOGA",
-      "16": "HAIDAR SYAFIQ ZAIN",
-      "17": "KHANSA PUTRI LATIFAH",
-      "18": "KYANDRA HAMZIQ HAMIZAN",
-      "19": "MOCHAMAD RIDWANNUDIN",
-      "20": "MOHAMAD YUSRA MAHDAN",
-      "21": "MUHAMAD RAISA PRAYOGA",
-      "22": "MUHAMMAD FINZA SAMIR QOLBI",
-      "23": "MUHAMMAD IRFAN",
-      "24": "MUHAMMAD NASER SYARIF GOZALI",
-      "25": "MUHAMMAD RAHLIL IBRAHIM",
-      "26": "MUHAMMAD RAIHAN ARKAN RAHAYU",
-      "27": "MUHAMMAD RIZKY NASRUDIN",
-      "28": "MU'TASHIM VEDA ARTHAGUNG",
-      "29": "NAZHILA ANDHINI",
-      "30": "PRIYANKA ARSYA SAFIERA",
-      "31": "RADITYA PRATAMA",
-      "32": "RAFI SUPRIYADI",
-      "33": "RASYA OKTAVIAN AL HABBSYI",
-      "34": "REYVAN RIZQI RIVALDI",
-      "35": "RIGA HENDRI SUWARA",
-      "36": "RIZQI MAULANA",
-      "37": "RIZQI MISHARY RASHID",
-      "38": "SAFA KHAIRUNISA",
-      "39": "SITI NURSYAHIDAH",
-      "40": "SYAHRIL AHMAD WIJAYA",
-      "41": "VICKY IZAQI ALMUWARIZKI"
+      "1": { nama: "ABDILAH ISMAIL", pin: "1234" },
+      "2": { nama: "ABDULLAH AZZAMUL AKRAM", pin: "1234" },
+      "3": { nama: "ALDYANSYAH GEMA GUMILAR", pin: "1234" },
+      "4": { nama: "ADZANI AHSAN AL FARUQ", pin: "1234" },
+      "5": { nama: "ADZRA AQILAH HUSNA", pin: "1234" },
+      "6": { nama: "AKHDAN JABBAR RAHADIKA", pin: "1234" },
+      "7": { nama: "ALDY RAMADHAN", pin: "1234" },
+      "8": { nama: "ALFIN SAMUEL", pin: "1234" },
+      "9": { nama: "ALIF AHMAD ALFARABI", pin: "1234" },
+      "10": { nama: "ALTHAFUL MUHAMMAD ZIYAD", pin: "1234" },
+      "11": { nama: "ALYA NAYSHILLA ZALIANTY", pin: "1234" },
+      "12": { nama: "CANDRA MUHAMMAD RIZKI", pin: "1234" },
+      "13": { nama: "FABIAN SAKHII HAIDAR", pin: "1234" },
+      "14": { nama: "FADIL FADILAH", pin: "1234" },
+      "15": { nama: "FAHRI TRI TANDIAN PRAYOGA", pin: "1234" },
+      "16": { nama: "HAIDAR SYAFIQ ZAIN", pin: "1234" },
+      "17": { nama: "KHANSA PUTRI LATIFAH", pin: "1234" },
+      "18": { nama: "KYANDRA HAMZIQ HAMIZAN", pin: "1234" },
+      "19": { nama: "MOCHAMAD RIDWANNUDIN", pin: "1234" },
+      "20": { nama: "MOHAMAD YUSRA MAHDAN", pin: "1234" },
+      "21": { nama: "MUHAMAD RAISA PRAYOGA", pin: "1234" },
+      "22": { nama: "MUHAMMAD FINZA SAMIR QOLBI", pin: "1234" },
+      "23": { nama: "MUHAMMAD IRFAN", pin: "1234" },
+      "24": { nama: "MUHAMMAD NASER SYARIF GOZALI", pin: "1234" },
+      "25": { nama: "MUHAMMAD RAHLIL IBRAHIM", pin: "1234" },
+      "26": { nama: "MUHAMMAD RAIHAN ARKAN RAHAYU", pin: "1234" },
+      "27": { nama: "MUHAMMAD RIZKY NASRUDIN", pin: "1234" },
+      "28": { nama: "MU'TASHIM VEDA ARTHAGUNG", pin: "1234" },
+      "29": { nama: "NAZHILA ANDHINI", pin: "1234" },
+      "30": { nama: "PRIYANKA ARSYA SAFIERA", pin: "1234" },
+      "31": { nama: "RADITYA PRATAMA", pin: "1234" },
+      "32": { nama: "RAFI SUPRIYADI", pin: "1234" },
+      "33": { nama: "RASYA OKTAVIAN AL HABBSYI", pin: "1234" },
+      "34": { nama: "REYVAN RIZQI RIVALDI", pin: "1234" },
+      "35": { nama: "RIGA HENDRI SUWARA", pin: "1234" },
+      "36": { nama: "RIZQI MAULANA", pin: "1234" },
+      "37": { nama: "RIZQI MISHARY RASHID", pin: "1234" },
+      "38": { nama: "SAFA KHAIRUNISA", pin: "1234" },
+      "39": { nama: "SITI NURSYAHIDAH", pin: "1234" },
+      "40": { nama: "SYAHRIL AHMAD WIJAYA", pin: "1234" },
+      "41": { nama: "VICKY IZAQI ALMUWARIZKI", pin: "1234" }
     };
 
     let isAdmin = false;
+    let loggedInSiswa = null;
     let attendanceData = [];
+
+    const loginScreen = document.getElementById('loginScreen');
+    const mainScreen = document.getElementById('mainScreen');
+    const loginNoAbsen = document.getElementById('loginNoAbsen');
+    const loginPin = document.getElementById('loginPin');
+    const btnLoginSiswaSubmit = document.getElementById('btnLoginSiswaSubmit');
 
     const siswaSection = document.getElementById('siswaSection');
     const inputNoAbsenSiswa = document.getElementById('noAbsenSiswa');
@@ -378,12 +383,92 @@
 
     const tableBody = document.getElementById('attendanceTable');
     const btnToggleAdmin = document.getElementById('btnToggleAdmin');
+    const btnLogoutAdmin = document.getElementById('btnLogoutAdmin');
     const roleLabel = document.getElementById('roleLabel');
     const filterDateInput = document.getElementById('filterDate');
     const btnExport = document.getElementById('btnExport');
 
     const todayStr = new Date().toISOString().split('T')[0];
     filterDateInput.value = todayStr;
+
+    // OTOMATIS MASUK JIKA PERANGKAT SUDAH TERIKAT AKUN SISWA
+    function checkDeviceLock() {
+      const savedUser = localStorage.getItem('lockedStudent');
+      if (savedUser) {
+        loggedInSiswa = JSON.parse(savedUser);
+        inputNoAbsenSiswa.value = loggedInSiswa.noAbsen;
+        inputNamaSiswa.value = loggedInSiswa.nama;
+        roleLabel.innerText = `Mode Siswa: ${loggedInSiswa.nama}`;
+
+        loginScreen.classList.add('hidden');
+        mainScreen.classList.remove('hidden');
+      }
+    }
+    checkDeviceLock();
+
+    // PROSES LOGIN PERTAMA KALI SISWA
+    btnLoginSiswaSubmit.addEventListener('click', function() {
+      const no = loginNoAbsen.value.trim();
+      const pin = loginPin.value.trim();
+
+      if (!studentDatabase[no]) {
+        alert("Nomor absen tidak ditemukan!");
+        return;
+      }
+
+      if (studentDatabase[no].pin !== pin) {
+        alert("PIN Salah!");
+        return;
+      }
+
+      const userObj = { noAbsen: no, nama: studentDatabase[no].nama };
+      
+      // Kunci HP ini permanen
+      localStorage.setItem('lockedStudent', JSON.stringify(userObj));
+      loggedInSiswa = userObj;
+      
+      inputNoAbsenSiswa.value = loggedInSiswa.noAbsen;
+      inputNamaSiswa.value = loggedInSiswa.nama;
+      roleLabel.innerText = `Mode Siswa: ${loggedInSiswa.nama}`;
+
+      loginScreen.classList.add('hidden');
+      mainScreen.classList.remove('hidden');
+      alert(`Perangkat berhasil dikunci untuk ${loggedInSiswa.nama}!`);
+    });
+
+    // LOGIN MODE ADMIN
+    btnToggleAdmin.addEventListener('click', function() {
+      const pin = prompt("Masukkan PIN Admin Sekolah:");
+      if (pin === ADMIN_PIN) {
+        isAdmin = true;
+        roleLabel.innerText = "Mode: Admin Sekolah";
+        loginScreen.classList.add('hidden');
+        mainScreen.classList.remove('hidden');
+        siswaSection.classList.add('hidden');
+        adminForm.classList.remove('hidden');
+        btnExport.classList.remove('hidden');
+        btnLogoutAdmin.classList.remove('hidden');
+        alert("Login Admin Berhasil!");
+      } else if (pin !== null) {
+        alert("PIN Salah!");
+      }
+    });
+
+    // KELUAR MODE ADMIN
+    btnLogoutAdmin.addEventListener('click', function() {
+      isAdmin = false;
+      adminForm.classList.add('hidden');
+      btnExport.classList.add('hidden');
+      btnLogoutAdmin.classList.add('hidden');
+
+      if (loggedInSiswa) {
+        roleLabel.innerText = `Mode Siswa: ${loggedInSiswa.nama}`;
+        siswaSection.classList.remove('hidden');
+      } else {
+        mainScreen.classList.add('hidden');
+        loginScreen.classList.remove('hidden');
+      }
+    });
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371e3;
@@ -400,14 +485,9 @@
       return R * c;
     }
 
-    inputNoAbsenSiswa.addEventListener('input', function() {
-      const val = this.value.trim();
-      inputNamaSiswa.value = studentDatabase[val] || '';
-    });
-
     inputNoAbsenAdmin.addEventListener('input', function() {
       const val = this.value.trim();
-      inputNamaAdmin.value = studentDatabase[val] || '';
+      inputNamaAdmin.value = studentDatabase[val] ? studentDatabase[val].nama : '';
     });
 
     onValue(absensiRef, (snapshot) => {
@@ -421,30 +501,6 @@
       renderTable();
     });
 
-    btnToggleAdmin.addEventListener('click', function() {
-      if (!isAdmin) {
-        const pin = prompt("Masukkan PIN Admin Sekolah:");
-        if (pin === ADMIN_PIN) {
-          isAdmin = true;
-          roleLabel.innerText = "Mode: Admin Sekolah";
-          btnToggleAdmin.innerText = "Logout Admin";
-          siswaSection.classList.add('hidden');
-          adminForm.classList.remove('hidden');
-          btnExport.classList.remove('hidden');
-          alert("Login Admin Berhasil!");
-        } else if (pin !== null) {
-          alert("PIN Salah!");
-        }
-      } else {
-        isAdmin = false;
-        roleLabel.innerText = "Mode: Siswa";
-        btnToggleAdmin.innerText = "Login Admin";
-        siswaSection.classList.remove('hidden');
-        adminForm.classList.add('hidden');
-        btnExport.classList.add('hidden');
-      }
-    });
-
     function getISODateString(dateObj) {
       const year = dateObj.getFullYear();
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -452,7 +508,6 @@
       return `${year}-${month}-${day}`;
     }
 
-    // 🔍 FUNGSI CEK SUDAH ABSEN HARI INI ATAU BELUM
     function sudahAbsenHariIni(noAbsen) {
       const today = getISODateString(new Date());
       return attendanceData.some(item => {
@@ -510,7 +565,6 @@
     filterDateInput.addEventListener('change', renderTable);
 
     function simpanAbsen(noAbsen, nama, statusPilihan) {
-      // PERIKSA LAGI SEBELUM SIMPAN
       if (sudahAbsenHariIni(noAbsen)) {
         alert(`Gagal! Nomor Absen ${noAbsen} (${nama}) sudah melakukan absensi hari ini.`);
         return;
@@ -540,8 +594,6 @@
       push(absensiRef, newRecord)
         .then(() => {
           filterDateInput.value = getISODateString(now);
-          inputNoAbsenSiswa.value = '';
-          inputNamaSiswa.value = '';
           if(adminForm) adminForm.reset();
         })
         .catch((err) => {
@@ -551,15 +603,10 @@
 
     // 1. ABSEN MANUAL SISWA
     btnManualSiswa.addEventListener('click', function() {
-      const noAbsen = inputNoAbsenSiswa.value.trim();
-      const nama = inputNamaSiswa.value.trim();
+      if (!loggedInSiswa) return;
+      const noAbsen = loggedInSiswa.noAbsen;
+      const nama = loggedInSiswa.nama;
 
-      if (!noAbsen || !nama) {
-        alert('Masukkan Nomor Absen yang valid!');
-        return;
-      }
-
-      // CEK DULU SEBELUM MINTA GPS
       if (sudahAbsenHariIni(noAbsen)) {
         alert(`Nomor Absen ${noAbsen} (${nama}) sudah melakukan absensi hari ini!`);
         return;
@@ -593,6 +640,8 @@
 
     // 2. ABSEN FINGERPRINT SISWA
     btnFingerprint.addEventListener('click', function() {
+      if (!loggedInSiswa) return;
+
       if (!navigator.geolocation) {
         alert('GPS Perangkat tidak didukung!');
         return;
@@ -614,61 +663,29 @@
             return;
           }
 
-          const savedUser = JSON.parse(localStorage.getItem('fingerprintUser'));
+          if (sudahAbsenHariIni(loggedInSiswa.noAbsen)) {
+            alert(`Nomor Absen ${loggedInSiswa.noAbsen} (${loggedInSiswa.nama}) sudah melakukan absensi hari ini!`);
+            return;
+          }
 
-          if (savedUser) {
-            // CEK APAKAH SISWA DENGAN FINGERPRINT INI SUDAH ABSEN HARI INI
-            if (sudahAbsenHariIni(savedUser.noAbsen)) {
-              alert(`Nomor Absen ${savedUser.noAbsen} (${savedUser.nama}) sudah melakukan absensi hari ini!`);
-              return;
-            }
-
-            try {
-              const assertion = await navigator.credentials.get({
-                publicKey: { challenge: new Uint8Array([1, 2, 3, 4]), timeout: 60000, userVerification: "required" }
-              });
-
-              if (assertion) {
-                simpanAbsen(savedUser.noAbsen, savedUser.nama, 'Hadir');
-                alert(`Absensi Fingerprint Berhasil! (${savedUser.nama})`);
+          try {
+            const credential = await navigator.credentials.create({
+              publicKey: {
+                challenge: new Uint8Array([1, 2, 3, 4]),
+                rp: { name: "Absensi Sekolah" },
+                user: { id: new Uint8Array([1, 2, 3, 4]), name: loggedInSiswa.nama, displayName: loggedInSiswa.nama },
+                pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                timeout: 60000,
+                authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
               }
-            } catch (err) {
-              alert('Autentikasi fingerprint dibatalkan.');
-            }
-          } else {
-            const noAbsen = prompt("Pendaftaran Awal Fingerprint: Masukkan Nomor Absen:");
-            if (!noAbsen || !studentDatabase[noAbsen]) {
-              alert("Nomor Absen tidak ditemukan!");
-              return;
-            }
+            });
 
-            if (sudahAbsenHariIni(noAbsen)) {
-              alert(`Nomor Absen ${noAbsen} sudah melakukan absensi hari ini!`);
-              return;
+            if (credential) {
+              simpanAbsen(loggedInSiswa.noAbsen, loggedInSiswa.nama, 'Hadir');
+              alert(`Absensi Fingerprint Berhasil! (${loggedInSiswa.nama})`);
             }
-
-            const nama = studentDatabase[noAbsen];
-
-            try {
-              const credential = await navigator.credentials.create({
-                publicKey: {
-                  challenge: new Uint8Array([1, 2, 3, 4]),
-                  rp: { name: "Absensi Sekolah" },
-                  user: { id: new Uint8Array([1, 2, 3, 4]), name: nama, displayName: nama },
-                  pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-                  timeout: 60000,
-                  authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
-                }
-              });
-
-              if (credential) {
-                localStorage.setItem('fingerprintUser', JSON.stringify({ noAbsen, nama }));
-                simpanAbsen(noAbsen, nama, 'Hadir');
-                alert(`Pendaftaran & Absensi Berhasil!`);
-              }
-            } catch (err) {
-              alert('Pendaftaran fingerprint gagal.');
-            }
+          } catch (err) {
+            alert('Autentikasi fingerprint dibatalkan.');
           }
         },
         (error) => {
