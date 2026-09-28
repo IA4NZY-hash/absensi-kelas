@@ -170,7 +170,7 @@
 </head>
 <body>
 
-  <!-- ================= HALAMAN LOGIN (MUNCUL PERTAMA KALI) ================= -->
+  <!-- ================= HALAMAN LOGIN ================= -->
   <div id="loginScreen" class="container login-wrapper">
     <div class="header-title">
       <h2>Login Absensi</h2>
@@ -183,20 +183,16 @@
     </div>
 
     <div class="form-group">
-      <label for="loginPin">PIN Siswa (Default: 1234)</label>
+      <label for="loginPin">PIN Siswa</label>
       <input type="password" id="loginPin" placeholder="Masukkan PIN">
     </div>
 
     <button type="button" class="btn-submit" id="btnLoginSiswaSubmit" style="width: 100%; margin-top: 10px;">
       Masuk & Kunci Perangkat
     </button>
-
-    <div style="text-align: center; margin-top: 24px;">
-      <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Mode Admin</button>
-    </div>
   </div>
 
-  <!-- ================= TAMPILAN UTAMA ABSEN (TERSEMBUNYI SEBELUM LOGIN) ================= -->
+  <!-- ================= TAMPILAN UTAMA ABSEN ================= -->
   <div id="mainScreen" class="container hidden">
     <div class="header-title">
       <h2>Presensi Sekolah</h2>
@@ -204,8 +200,11 @@
     </div>
 
     <div class="admin-bar">
-      <span id="roleLabel" style="font-weight: 600; font-size: 13px;">Status: Login Siswa</span>
-      <button type="button" class="btn-admin-toggle hidden" id="btnLogoutAdmin">Keluar Mode Admin</button>
+      <span id="roleLabel" style="font-weight: 600; font-size: 13px;">Mode Siswa</span>
+      <div>
+        <button type="button" class="btn-admin-toggle" id="btnToggleAdmin">Mode Admin</button>
+        <button type="button" class="btn-admin-toggle hidden" id="btnLogoutAdmin" style="color: #ef4444; border-color: #ef4444;">Kembali ke Siswa</button>
+      </div>
     </div>
 
     <!-- PANEL ABSEN SISWA -->
@@ -311,53 +310,52 @@
     const db = getDatabase(app);
     const absensiRef = ref(db, 'absensi');
 
-    const ADMIN_PIN = "TJKT41";
+    const ADMIN_PIN = "TJKT40";
     const SCHOOL_LAT = -6.890391; 
     const SCHOOL_LNG = 107.558687; 
     const MAX_RADIUS_METERS = 100; 
 
     const studentDatabase = {
-      "1": { nama: "ABDILAH ISMAIL", pin: "1234" },
-      "2": { nama: "ABDULLAH AZZAMUL AKRAM", pin: "1234" },
-      "3": { nama: "ALDYANSYAH GEMA GUMILAR", pin: "1234" },
-      "4": { nama: "ADZANI AHSAN AL FARUQ", pin: "1234" },
-      "5": { nama: "ADZRA AQILAH HUSNA", pin: "1234" },
-      "6": { nama: "AKHDAN JABBAR RAHADIKA", pin: "1234" },
-      "7": { nama: "ALDY RAMADHAN", pin: "1234" },
-      "8": { nama: "ALFIN SAMUEL", pin: "1234" },
-      "9": { nama: "ALIF AHMAD ALFARABI", pin: "1234" },
-      "10": { nama: "ALTHAFUL MUHAMMAD ZIYAD", pin: "1234" },
-      "11": { nama: "ALYA NAYSHILLA ZALIANTY", pin: "1234" },
-      "12": { nama: "CANDRA MUHAMMAD RIZKI", pin: "1234" },
-      "13": { nama: "FABIAN SAKHII HAIDAR", pin: "1234" },
-      "14": { nama: "FADIL FADILAH", pin: "1234" },
-      "15": { nama: "FAHRI TRI TANDIAN PRAYOGA", pin: "1234" },
-      "16": { nama: "HAIDAR SYAFIQ ZAIN", pin: "1234" },
-      "17": { nama: "KHANSA PUTRI LATIFAH", pin: "1234" },
-      "18": { nama: "KYANDRA HAMZIQ HAMIZAN", pin: "1234" },
-      "19": { nama: "MOCHAMAD RIDWANNUDIN", pin: "1234" },
-      "20": { nama: "MOHAMAD YUSRA MAHDAN", pin: "1234" },
-      "21": { nama: "MUHAMAD RAISA PRAYOGA", pin: "1234" },
-      "22": { nama: "MUHAMMAD FINZA SAMIR QOLBI", pin: "1234" },
-      "23": { nama: "MUHAMMAD IRFAN", pin: "1234" },
-      "24": { nama: "MUHAMMAD NASER SYARIF GOZALI", pin: "1234" },
-      "25": { nama: "MUHAMMAD RAHLIL IBRAHIM", pin: "1234" },
-      "26": { nama: "MUHAMMAD RAIHAN ARKAN RAHAYU", pin: "1234" },
-      "27": { nama: "MUHAMMAD RIZKY NASRUDIN", pin: "1234" },
-      "28": { nama: "MU'TASHIM VEDA ARTHAGUNG", pin: "1234" },
-      "29": { nama: "NAZHILA ANDHINI", pin: "1234" },
-      "30": { nama: "PRIYANKA ARSYA SAFIERA", pin: "1234" },
-      "31": { nama: "RADITYA PRATAMA", pin: "1234" },
-      "32": { nama: "RAFI SUPRIYADI", pin: "1234" },
-      "33": { nama: "RASYA OKTAVIAN AL HABBSYI", pin: "1234" },
-      "34": { nama: "REYVAN RIZQI RIVALDI", pin: "1234" },
-      "35": { nama: "RIGA HENDRI SUWARA", pin: "1234" },
-      "36": { nama: "RIZQI MAULANA", pin: "1234" },
-      "37": { nama: "RIZQI MISHARY RASHID", pin: "1234" },
-      "38": { nama: "SAFA KHAIRUNISA", pin: "1234" },
-      "39": { nama: "SITI NURSYAHIDAH", pin: "1234" },
-      "40": { nama: "SYAHRIL AHMAD WIJAYA", pin: "1234" },
-      "41": { nama: "VICKY IZAQI ALMUWARIZKI", pin: "1234" }
+      "1": { nama: "ABDILAH ISMAIL", pin: "1AI" },
+      "2": { nama: "ABDULLAH AZZAMUL AKRAM", pin: "2AAA" },
+      "3": { nama: "ALDYANSYAH GEMA GUMILAR", pin: "3AGG" },
+      "4": { nama: "ADZANI AHSAN AL FARUQ", pin: "4AAAF" },
+      "5": { nama: "ADZRA AQILAH HUSNA", pin: "5AAH" },
+      "6": { nama: "AKHDAN JABBAR RAHADIKA", pin: "6AJR" },
+      "7": { nama: "ALDY RAMADHAN", pin: "7AR" },
+      "8": { nama: "ALFIN SAMUEL", pin: "8AS" },
+      "9": { nama: "ALIF AHMAD ALFARABI", pin: "9AAA" },
+      "10": { nama: "ALTHAFUL MUHAMMAD ZIYAD", pin: "10AMZ" },
+      "11": { nama: "ALYA NAYSHILLA ZALIANTY", pin: "11ANZ" },
+      "12": { nama: "CANDRA MUHAMMAD RIZKI", pin: "12CMR" },
+      "13": { nama: "FABIAN SAKHII HAIDAR", pin: "13FSH" },
+      "14": { nama: "FADIL FADILAH", pin: "14FF" },
+      "15": { nama: "FAHRI TRI TANDIAN PRAYOGA", pin: "15FTTP" },
+      "16": { nama: "HAIDAR SYAFIQ ZAIN", pin: "16HSZ" },
+      "17": { nama: "KHANSA PUTRI LATIFAH", pin: "17KPL" },
+      "18": { nama: "KYANDRA HAMZIQ HAMIZAN", pin: "18KHH" },
+      "19": { nama: "MOCHAMAD RIDWANNUDIN", pin: "19MR" },
+      "20": { nama: "MOHAMAD YUSRA MAHDAN", pin: "20MYM" },
+      "21": { nama: "MUHAMAD RAISA PRAYOGA", pin: "21MRP" },
+      "22": { nama: "MUHAMMAD FINZA SAMIR QOLBI", pin: "22MFSQ" },
+      "23": { nama: "MUHAMMAD IRFAN", pin: "23MI" },
+      "24": { nama: "MUHAMMAD NASER SYARIF GOZALI", pin: "24MNSG" },
+      "25": { nama: "MUHAMMAD RAHLIL IBRAHIM", pin: "25MRI" },
+      "26": { nama: "MUHAMMAD RAIHAN ARKAN RAHAYU", pin: "26MRAR" },
+      "27": { nama: "MUHAMMAD RIZKY NASRUDIN", pin: "27MRN" },
+      "28": { nama: "MU'TASHIM VEDA ARTHAGUNG", pin: "28MVA" },
+      "29": { nama: "NAZHILA ANDHINI", pin: "29NA" },
+      "30": { nama: "PRIYANKA ARSYA SAFIERA", pin: "30PAS" },
+      "31": { nama: "RADITYA PRATAMA", pin: "31RP" },
+      "32": { nama: "RAFI SUPRIYADI", pin: "32RS" },
+      "33": { nama: "RASYA OKTAVIAN AL HABBSYI", pin: "33ROAH" },
+      "34": { nama: "REYVAN RIZQI RIVALDI", pin: "34RRR" },
+      "35": { nama: "RIGA HENDRI SUWARA", pin: "35RHS" },
+      "36": { nama: "RIZQI MAULANA", pin: "36RM" },
+      "37": { nama: "RIZQI MISHARY RASHID", pin: "37RMR" },
+      "38": { nama: "SAFA KHAIRUNISA", pin: "38SK" },
+      "39": { nama: "SITI NURSYAHIDAH", pin: "39SN" },
+      "40": { nama: "SYAHRIL AHMAD WIJAYA", pin: "40SAW" }
     };
 
     let isAdmin = false;
@@ -406,7 +404,7 @@
     }
     checkDeviceLock();
 
-    // PROSES LOGIN PERTAMA KALI SISWA
+    // PROSES LOGIN SISWA PERTAMA KALI
     btnLoginSiswaSubmit.addEventListener('click', function() {
       const no = loginNoAbsen.value.trim();
       const pin = loginPin.value.trim();
@@ -423,7 +421,6 @@
 
       const userObj = { noAbsen: no, nama: studentDatabase[no].nama };
       
-      // Kunci HP ini permanen
       localStorage.setItem('lockedStudent', JSON.stringify(userObj));
       loggedInSiswa = userObj;
       
@@ -436,17 +433,16 @@
       alert(`Perangkat berhasil dikunci untuk ${loggedInSiswa.nama}!`);
     });
 
-    // LOGIN MODE ADMIN
+    // MASUK MODE ADMIN VIA TOMBOL
     btnToggleAdmin.addEventListener('click', function() {
       const pin = prompt("Masukkan PIN Admin Sekolah:");
       if (pin === ADMIN_PIN) {
         isAdmin = true;
-        roleLabel.innerText = "Mode: Admin Sekolah";
-        loginScreen.classList.add('hidden');
-        mainScreen.classList.remove('hidden');
+        roleLabel.innerText = "Mode: Absensi Kelas";
         siswaSection.classList.add('hidden');
         adminForm.classList.remove('hidden');
         btnExport.classList.remove('hidden');
+        btnToggleAdmin.classList.add('hidden');
         btnLogoutAdmin.classList.remove('hidden');
         alert("Login Admin Berhasil!");
       } else if (pin !== null) {
@@ -460,6 +456,7 @@
       adminForm.classList.add('hidden');
       btnExport.classList.add('hidden');
       btnLogoutAdmin.classList.add('hidden');
+      btnToggleAdmin.classList.remove('hidden');
 
       if (loggedInSiswa) {
         roleLabel.innerText = `Mode Siswa: ${loggedInSiswa.nama}`;
